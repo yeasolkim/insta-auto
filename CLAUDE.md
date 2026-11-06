@@ -11,8 +11,8 @@
 4. 결과(게시 링크 또는 오류)를 알려준다. 게시는 되돌리기 어려우니 확인 없이 올리지 않는다.
 
 ## 오류 대처
-- `#190` 토큰 만료/무효 → `bash scripts/refresh_token.sh`, 이미 만료(60일 경과)면 앱 대시보드에서 새 토큰 발급 후 사용자가 직접 터미널에서 `bash scripts/set_token.sh`
-- `#10` / permission → Meta 앱에 `instagram_business_content_publish` 권한 추가 후 토큰 재발급
+- `#190` 토큰 무효(페북 비밀번호 변경·앱 권한 해제 등) → 앱 대시보드(통합 로그인)에서 EAA 토큰 새로 발급 후 사용자가 직접 터미널에서 `bash scripts/set_token.sh`
+- `#10` / permission → Meta 앱(통합 로그인 구성)에 `instagram_content_publish`, `pages_show_list`, `pages_read_engagement` 권한 확인 후 토큰 재발급
 - `#9` / 비율 오류 → 4:5 ~ 1.91:1로 자르기
 - 예약 확인: `ls posts/` (posted.txt 있으면 게시 완료)
 - 예약 취소: 해당 `posts/<날짜>` 폴더 삭제 후 커밋·푸시
@@ -20,6 +20,7 @@
 ## 구성
 - `publish.py` / `.github/workflows/publish.yml`: Actions에서 게시. 매일 00:00 UTC에 `posts/<오늘 날짜>` 확인
 - `scripts/post.py`: 로컬에서 폴더 업로드 + 워크플로 실행
-- `scripts/set_token.sh`: 토큰 등록(키체인 + GitHub Secret `IG_ACCESS_TOKEN`, `IG_USER_ID`)
-- `scripts/refresh_token.sh`: 토큰 60일 연장. `scripts/install_refresh.sh`로 매주 월요일 10시 launchd 자동 실행 등록 (로그 `~/Library/Logs/insta-auto-refresh.log`)
+- API: graph.facebook.com (Meta가 새 앱에서 Instagram 로그인 방식을 막아 통합 로그인 = Facebook 로그인 방식 사용)
+- `scripts/set_token.sh`: EAA 토큰 + 앱 시크릿 → 만료 없는 페이지 토큰 생성 → GitHub Secret `IG_ACCESS_TOKEN`, `IG_USER_ID`. 갱신 작업 불필요
+- 앱 ID 1450101423141787, 페이지 ID 1036493289554096
 - GitHub 인증은 로컬 `gh` CLI 로그인을 사용 (별도 PAT 없음)

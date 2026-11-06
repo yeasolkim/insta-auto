@@ -7,8 +7,9 @@ import urllib.parse
 
 import requests
 
-API = "https://graph.instagram.com/v21.0"
-TOKEN = os.environ["IG_ACCESS_TOKEN"]
+API = "https://graph.facebook.com/v24.0"
+TOKEN = os.environ["IG_ACCESS_TOKEN"]  # 페이스북 페이지 토큰(만료 없음)
+USER_ID = os.environ["IG_USER_ID"]  # 인스타 비즈니스 계정 ID
 BASE = os.environ["IMG_BASE"].rstrip("/")
 
 
@@ -61,7 +62,7 @@ def main(folder):
     caption_path = f"{folder}/caption.txt"
     caption = open(caption_path, encoding="utf-8").read().strip() if os.path.exists(caption_path) else ""
 
-    user_id = os.environ.get("IG_USER_ID") or get("me", fields="user_id")["user_id"]
+    user_id = USER_ID
     urls = [BASE + "/" + urllib.parse.quote(p) for p in photos]
 
     if len(urls) == 1:
