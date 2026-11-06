@@ -11,8 +11,8 @@
 4. 결과(게시 링크 또는 오류)를 알려준다. 게시는 되돌리기 어려우니 확인 없이 올리지 않는다.
 
 ## 오류 대처
-- `#190` 토큰 무효(페북 비밀번호 변경·앱 권한 해제 등) → 앱 대시보드(통합 로그인)에서 EAA 토큰 새로 발급 후 사용자가 직접 터미널에서 `bash scripts/set_token.sh`
-- `#10` / permission → Meta 앱(통합 로그인 구성)에 `instagram_content_publish`, `pages_show_list`, `pages_read_engagement` 권한 확인 후 토큰 재발급
+- `#190` 토큰 만료/무효 → 앱 대시보드 > API setup with Unified login > 토큰 생성으로 새 토큰 발급 후 사용자가 직접 터미널에서 `bash scripts/set_token.sh`
+- `#10` / permission → 통합 로그인 구성에 `instagram_basic`, `instagram_content_publish` 권한 확인 후 토큰 재발급
 - `#9` / 비율 오류 → 4:5 ~ 1.91:1로 자르기
 - 예약 확인: `ls posts/` (posted.txt 있으면 게시 완료)
 - 예약 취소: 해당 `posts/<날짜>` 폴더 삭제 후 커밋·푸시
@@ -20,7 +20,7 @@
 ## 구성
 - `publish.py` / `.github/workflows/publish.yml`: Actions에서 게시. 매일 00:00 UTC에 `posts/<오늘 날짜>` 확인
 - `scripts/post.py`: 로컬에서 폴더 업로드 + 워크플로 실행
-- API: graph.facebook.com (Meta가 새 앱에서 Instagram 로그인 방식을 막아 통합 로그인 = Facebook 로그인 방식 사용)
-- `scripts/set_token.sh`: EAA 토큰 + 앱 시크릿 → 만료 없는 페이지 토큰 생성 → GitHub Secret `IG_ACCESS_TOKEN`, `IG_USER_ID`. 갱신 작업 불필요
-- 앱 ID 1450101423141787, 페이지 ID 1036493289554096
+- API: graph.facebook.com, Instagram API with Unified login (새 앱은 Instagram 로그인 방식 사용 불가). 토큰은 시스템 사용자 토큰(SUAT), 페이지 불필요
+- `scripts/set_token.sh`: 토큰 → `/me/assigned_instagram_accounts`로 계정 ID 확인 → GitHub Secret `IG_ACCESS_TOKEN`, `IG_USER_ID`
+- 인스타 계정 @knitting_in_the_sauna = 17841476496692787, 앱 ID 1450101423141787
 - GitHub 인증은 로컬 `gh` CLI 로그인을 사용 (별도 PAT 없음)
