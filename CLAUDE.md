@@ -21,5 +21,5 @@
 - `publish.py` / `.github/workflows/publish.yml`: Actions에서 게시. 매일 00:00 UTC에 `posts/<오늘 날짜>` 확인
 - `scripts/post.py`: 로컬에서 폴더 업로드 + 워크플로 실행
 - `scripts/set_token.sh`: 토큰 등록(키체인 + GitHub Secret `IG_ACCESS_TOKEN`, `IG_USER_ID`)
-- `scripts/refresh_token.sh`: 토큰 60일 연장 (수동 실행, 50일 안에)
+- `scripts/refresh_token.sh`: 토큰 60일 연장. `scripts/install_refresh.sh`로 매주 월요일 10시 launchd 자동 실행 등록 (로그 `~/Library/Logs/insta-auto-refresh.log`)
 - GitHub 인증은 로컬 `gh` CLI 로그인을 사용 (별도 PAT 없음)

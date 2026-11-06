@@ -17,4 +17,4 @@ security add-generic-password -U -s insta-auto -a ig-token -w "$TOKEN"
 printf '%s' "$TOKEN" | gh secret set IG_ACCESS_TOKEN
 printf '%s' "$USER_ID" | gh secret set IG_USER_ID
 echo "키체인과 GitHub Secret에 저장 완료"
-echo "토큰은 60일 뒤 만료됩니다. 50일 안에 bash scripts/refresh_token.sh 를 실행하세요."
+bash scripts/install_refresh.sh
