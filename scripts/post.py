@@ -8,6 +8,7 @@
 
 사진폴더: JPG/PNG 1~10장 + caption.txt. 파일 이름 순서대로 올라간다.
 PNG는 자동으로 JPG로 변환한다(macOS sips 사용).
+릴스: 폴더에 MP4 1개 + caption.txt (JPG/PNG 1장을 같이 두면 커버로 사용).
 """
 import datetime as dt
 import json
@@ -44,7 +45,15 @@ def main():
     date = args[1] if len(args) > 1 else None
 
     photos = sorted(p for p in src.iterdir() if p.suffix.lower() in (".jpg", ".jpeg", ".png"))
-    if not 1 <= len(photos) <= 10:
+    videos = sorted(p for p in src.iterdir() if p.suffix.lower() == ".mp4")
+    if len(videos) > 1:
+        sys.exit(f"영상은 1개만 올릴 수 있음 (현재 {len(videos)}개)")
+    if videos:
+        if len(photos) > 1:
+            sys.exit("릴스 폴더에는 커버 사진을 1장까지만 둘 수 있음")
+        if videos[0].stat().st_size > 95 * 1024 * 1024:
+            sys.exit("영상이 95MB를 넘음 (GitHub 파일 한도)")
+    elif not 1 <= len(photos) <= 10:
         sys.exit(f"사진은 1~10장이어야 함 (현재 {len(photos)}장)")
     cap_file = src / "caption.txt"
     caption = cap_file.read_text(encoding="utf-8").strip() if cap_file.exists() else ""
@@ -56,7 +65,7 @@ def main():
     for p in photos:
         w, h = image_size(p)
         ratio = w / h
-        if not 0.8 - 0.005 <= ratio <= 1.91 + 0.005:
+        if not videos and not 0.8 - 0.005 <= ratio <= 1.91 + 0.005:
             sys.exit(f"{p.name}: 비율 {w}x{h}는 인스타 허용 범위(4:5 ~ 1.91:1) 밖")
 
     if date:
@@ -70,8 +79,10 @@ def main():
         sys.exit(f"{target.relative_to(REPO_DIR)} 가 이미 있음 (같은 날 예약은 1개)")
 
     print(f"올릴 위치: {target.relative_to(REPO_DIR)}")
+    for v in videos:
+        print(f"  릴스 영상: {v.name} ({v.stat().st_size / 1024 / 1024:.1f}MB)")
     for i, p in enumerate(photos, 1):
-        print(f"  {i:02d}. {p.name}")
+        print(f"  {'커버' if videos else f'{i:02d}.'} {p.name}")
     print(f"캡션 ({len(caption)}자):\n{caption[:300]}{'…' if len(caption) > 300 else ''}")
     if dry:
         print("\n[dry-run] 검사 통과. 실제로 올리지 않음.")
@@ -89,6 +100,8 @@ def main():
         if out.stat().st_size > MAX_BYTES:
             shutil.rmtree(target)
             sys.exit(f"{p.name}: 8MB 초과")
+    for v in videos:
+        shutil.copy(v, target / "reel.mp4")
     (target / "caption.txt").write_text(caption + "\n", encoding="utf-8")
 
     rel = str(target.relative_to(REPO_DIR))

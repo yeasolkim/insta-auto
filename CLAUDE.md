@@ -4,6 +4,7 @@
 
 ## "인스타 올려줘" 요청을 받으면
 1. 올릴 사진 폴더(JPG/PNG 1~10장 + caption.txt)를 확인한다. 없으면 만들어 준다.
+   - 릴스(영상)는 폴더에 MP4 1개 + caption.txt (JPG/PNG 1장을 같이 두면 커버). 9:16, H.264 권장. 영상은 Actions에서 인스타로 직접 업로드한다.
 2. `python3 scripts/post.py <폴더> --dry-run` 으로 순서·캡션·비율을 검사하고 사용자에게 보여준다.
 3. 사용자가 "이대로 올릴까요?"에 확인하면 실행:
    - 즉시: `python3 scripts/post.py <폴더>`
